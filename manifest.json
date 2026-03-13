@@ -1,0 +1,14 @@
+{
+  "domain": "foxess_charge_schedule",
+  "name": "FoxESS Charge Schedule",
+  "version": "0.7",
+  "documentation": "https://www.foxesscloud.com/public/i18n/en/OpenApiDocument.html",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": [],
+  "config_flow": true,
+  "iot_class": "cloud_polling",
+  "integration_type": "hub",
+  "homeassistant": "2023.10.0",
+  "supported_platforms": ["switch", "time"]
+}

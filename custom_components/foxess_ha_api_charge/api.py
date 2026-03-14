@@ -1,14 +1,13 @@
 import time
 import hashlib
 import logging
-import requests  # Added missing import
+import requests 
 
 _LOGGER = logging.getLogger(__name__)
 
 class FoxESSApi:
     """FoxESS API interface using the official Open API domain."""
 
-    # Updated to the official domain from the documentation
     BASE_URL = "https://www.foxesscloud.com" 
 
     def __init__(self, api_key, device_sn):
@@ -16,16 +15,10 @@ class FoxESSApi:
         self.device_sn = device_sn
 
     def _headers(self, path, params=None):
-        """
-        This function is used to generate a signature consisting of URL, token, and timestamp, and return a dictionary containing the signature and other information.
-            :param token: your key
-            :param path:  your request path
-            :param lang: language, default is English.
-            :return: with authentication header
-        """
+
         timestamp = round(time.time() * 1000)
         signature = rf"{path}\r\n{self.api_key}\r\n{timestamp}"
-        # or use user_agent_rotator.get_random_user_agent() for user-agent
+
         return {
             "token": self.api_key,
             "lang": "en",
@@ -45,30 +38,7 @@ class FoxESSApi:
         else:
             return res.upper()
 
-#    def _headers(self, path, params=None):
-
-#        timestamp = round(time.time() * 1000)  # correct milliseconds string
-
-#        # For GET requests with query params, include them in the signing string
-#        if params:
-#            query_str = "&".join(f"{k}={v}" for k, v in params.items())
-#            sign_path = f"{path}?{query_str}"
-#        else:
-#            sign_path = path
-
-#        sign_str = rf"{sign_path}\r\n{self.api_key}\r\n{timestamp}"
-#        sign = hashlib.md5(sign_str.encode("utf-8")).hexdigest()
-
-#        return {
-#            "token": self.api_key,
-#            "timestamp": str(timestamp),
-#            "signature": sign,
-#            "Content-Type": "application/json",
-#            "lang": "en",
-#        }
-
     def get_charge_times(self):
-        """Fetch and normalize data into a dictionary of integers."""
         path = "/op/v0/device/battery/forceChargeTime/get"
         params = {"sn": self.device_sn}
         headers = self._headers(path, params=params)
@@ -83,7 +53,6 @@ class FoxESSApi:
         res = response.get("result", {})
         if isinstance(res, list): res = res[0]
 
-        # Store as integers for easy manipulation
         return {
             "h_start1": res.get("startTime1", {}).get("hour", 0),
             "m_start1": res.get("startTime1", {}).get("minute", 0),
@@ -98,7 +67,6 @@ class FoxESSApi:
         }
 
     def set_charge_times(self, h1_s, m1_s, h1_e, m1_e, h2_s, m2_s, h2_e, m2_e, en1, en2):
-        """Push payload with separate hour/minute integers."""
         path = "/op/v0/device/battery/forceChargeTime/set"
         
         payload = {

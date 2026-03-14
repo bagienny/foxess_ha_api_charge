@@ -2,7 +2,7 @@
   "domain": "foxess_charge_schedule",
   "name": "FoxESS Charge Periods",
   "version": "0.7",
-  "documentation": "https://github.com/bagienny/foxess_ha_api_charge/tree/main",
+  "documentation": "https://github.com/bagienny/foxess_ha_api_charge/",
   "requirements": [],
   "dependencies": [],
   "codeowners": [],

@@ -7,7 +7,6 @@ from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up FoxESS timer entities for the Time platform."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
     device_sn = entry.data["device_sn"]
 
@@ -20,7 +19,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities(entities)
 
 class FoxESSTime(CoordinatorEntity, TimeEntity):
-    """Represents a charge timer start/end."""
 
     def __init__(self, coordinator, device_sn, key, name):
         super().__init__(coordinator)
@@ -35,21 +33,17 @@ class FoxESSTime(CoordinatorEntity, TimeEntity):
 
     @property
     def native_value(self):
-        """Build time object from separate hour and minute values."""
         data = self.coordinator.data
         if not data:
             return None
             
-        # self.key is "start1", "end1", etc.
         hour = data.get(f"h_{self.key}", 0)
         minute = data.get(f"m_{self.key}", 0)
         return dt_time(hour, minute)
 
     async def async_set_value(self, value: dt_time):
-        """Extract H/M from the picker and send to API."""
         d = self.coordinator.data
         
-        # Create a dictionary of all current values
         vals = {
             "h1s": d["h_start1"], "m1s": d["m_start1"],
             "h1e": d["h_end1"], "m1e": d["m_end1"],
@@ -58,9 +52,8 @@ class FoxESSTime(CoordinatorEntity, TimeEntity):
             "en1": d["enable1"], "en2": d["enable2"]
         }
 
-        # Update the specific hour/minute for this entity
-        vals[f"h{self.key[5:]}{self.key[0]}"] = value.hour # Logic to map keys
-        # Or more simply:
+        vals[f"h{self.key[5:]}{self.key[0]}"] = value.hour
+
         if self.key == "start1":
             vals["h1s"], vals["m1s"] = value.hour, value.minute
         elif self.key == "end1":
